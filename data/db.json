@@ -66,7 +66,7 @@
       "description": "Exquisite French lace with delicate floral patterns on a soft mesh base. Each yard features intricate scalloped edges and a luxurious drape. Our Premium French Lace is sourced directly from the finest mills in France, ensuring authentic quality. The fine netting provides a comfortable fit while the embroidered motifs add an elegant dimension. Perfect for bridal veils, reception dresses, and statement evening gowns. Available in a range of sophisticated colours from classic ivory and champagne to bold jewel tones.",
       "specs": null,
       "price": 15000,
-      "images": "[\"https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=600&h=800&fit=crop\",\"https://images.unsplash.com/photo-1528459801416-a9e53bbf4e17?w=600&h=800&fit=crop\"]",
+      "images": "[\"/fabrics/lace.jpg\"]",
       "isActive": true
     },
     {
@@ -77,7 +77,7 @@
       "description": "Vibrant Ankara fabric featuring bold, traditional African prints on 100% premium cotton. Our Ankara is milled in Nigeria using high-quality wax print techniques that ensure deep, lasting colour. The fabric is breathable, durable, and easy to care for — making it ideal for both everyday wears and special occasions. Each pattern tells a unique story inspired by African heritage. Use it for blouses, skirts, dresses, head wraps, and bespoke tailoring. Multiple yards recommended for complete outfits.",
       "specs": null,
       "price": 5000,
-      "images": "[\"https://images.unsplash.com/photo-1590735213920-68192a487bc2?w=600&h=800&fit=crop\",\"https://images.unsplash.com/photo-1595981267035-7b04ca84a82d?w=600&h=800&fit=crop\"]",
+      "images": "[\"/fabrics/ankara.jpg\"]",
       "isActive": true
     },
     {
@@ -88,7 +88,29 @@
       "description": "Pure mulberry silk charmeuse with an ultra-smooth, lustrous surface that drapes beautifully. This 22-momme weight silk offers the perfect balance of luxury and durability. Charmeuse silk is characterized by its satin weave construction, giving it a glossy front and matte back. Naturally temperature-regulating and hypoallergenic, this fabric glides against the skin for unparalleled comfort. Ideal for silk blouses, flowing dresses, lingerie, luxury bedding, and as lining fabric for high-end garments.",
       "specs": null,
       "price": 25000,
-      "images": "[\"https://images.unsplash.com/photo-1558171813-4c088753af8f?w=600&h=800&fit=crop\",\"https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=600&h=800&fit=crop\"]",
+      "images": "[\"/fabrics/silk.jpg\"]",
+      "isActive": true
+    },
+    {
+      "id": 4,
+      "name": "Premium Satin Fabric",
+      "slug": "premium-satin-fabric",
+      "fabricTypeId": 2,
+      "description": "Luxurious satin fabric with a smooth, glossy surface that catches the light beautifully. Available in a wide range of vibrant colours, this medium-weight satin is perfect for evening wear, prom dresses, bridal parties, and elegant home décor. The fabric has a beautiful drape and feels silky against the skin. Easy to sew and maintain, making it ideal for both beginners and experienced dressmakers.",
+      "specs": null,
+      "price": 8000,
+      "images": "[\"/fabrics/satin.jpg\"]",
+      "isActive": true
+    },
+    {
+      "id": 5,
+      "name": "Hand-Dyed Adire Fabric",
+      "slug": "hand-dyed-adire-fabric",
+      "fabricTypeId": 8,
+      "description": "Authentic Nigerian Adire fabric handcrafted using traditional tie-dye techniques. Each piece features unique patterns created by skilled artisans using natural indigo and other plant-based dyes. The resist-dyeing process ensures no two pieces are exactly alike, making every yard truly one-of-a-kind. Perfect for traditional ceremonies, contemporary fashion, home décor, and statement pieces. The fabric softens beautifully with each wash while maintaining its rich colour.",
+      "specs": null,
+      "price": 6000,
+      "images": "[\"/fabrics/adire.jpg\"]",
       "isActive": true
     }
   ],
