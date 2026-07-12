@@ -70,6 +70,7 @@ export default function ProductDetailPage() {
   }
 
   const inStock = selectedColour ? selectedColour.stockQuantity > 0 : false;
+  const [selectedImage, setSelectedImage] = useState(0);
 
   return (
     <div className="max-w-7xl mx-auto px-6 py-8">
@@ -82,12 +83,35 @@ export default function ProductDetailPage() {
       </nav>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        {/* Image */}
-        <div className="aspect-[3/4] bg-neutral-100 rounded-md flex items-center justify-center text-neutral-400">
-          {product.images?.[0] ? (
-            <img src={product.images[0]} alt={product.name} className="w-full h-full object-cover rounded-md" />
-          ) : (
-            <span>No image available</span>
+        {/* Image Gallery */}
+        <div>
+          <div className="aspect-[3/4] bg-neutral-100 rounded-md flex items-center justify-center text-neutral-400 overflow-hidden">
+            {product.images?.[selectedImage] ? (
+              <img
+                src={product.images[selectedImage]}
+                alt={product.name}
+                className="w-full h-full object-cover rounded-md"
+              />
+            ) : (
+              <span>No image available</span>
+            )}
+          </div>
+          {product.images && product.images.length > 1 && (
+            <div className="flex gap-2 mt-3 overflow-x-auto">
+              {product.images.map((img, i) => (
+                <button
+                  key={i}
+                  onClick={() => setSelectedImage(i)}
+                  className={`flex-shrink-0 w-16 h-16 rounded-md overflow-hidden border-2 transition-all ${
+                    selectedImage === i
+                      ? "border-primary-500"
+                      : "border-neutral-200 hover:border-neutral-400"
+                  }`}
+                >
+                  <img src={img} alt="" className="w-full h-full object-cover" />
+                </button>
+              ))}
+            </div>
           )}
         </div>
 

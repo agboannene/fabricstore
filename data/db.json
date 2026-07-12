@@ -63,10 +63,10 @@
       "name": "Premium French Lace",
       "slug": "premium-french-lace",
       "fabricTypeId": 1,
-      "description": "Exquisite French lace with delicate floral patterns on a soft mesh base. Each yard features intricate scalloped edges and a luxurious drape. Our Premium French Lace is sourced directly from the finest mills in France, ensuring authentic quality. The fine netting provides a comfortable fit while the embroidered motifs add an elegant dimension. Perfect for bridal veils, reception dresses, and statement evening gowns. Available in a range of sophisticated colours from classic ivory and champagne to bold jewel tones.",
+      "description": "Exquisite French and African lace collection featuring a wide variety of styles — from delicate floral embroidery and sunflower motifs to fully beaded and sequined designs. Each yard features intricate scalloped edges and luxurious drape. Perfect for bridal gowns, reception dresses, traditional ceremonies, and statement evening wear. Browse our selection of classic lace, embroidered lace, beaded lace, and sequined lace in colours ranging from soft pastels to bold jewel tones.",
       "specs": null,
       "price": 15000,
-      "images": "[\"/fabrics/lace.jpg\"]",
+      "images": "[\"/fabrics/lace.jpg\",\"/fabrics/lace-sunflower.jpg\",\"/fabrics/lace-green.jpg\",\"/fabrics/lace-purple-beaded.jpg\",\"/fabrics/lace-red-beaded.jpg\"]",
       "isActive": true
     },
     {
