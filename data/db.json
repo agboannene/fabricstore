@@ -66,7 +66,7 @@
       "description": "Exquisite French lace with delicate floral patterns on a soft mesh base. Each yard features intricate scalloped edges and a luxurious drape. Our Premium French Lace is sourced directly from the finest mills in France, ensuring authentic quality. The fine netting provides a comfortable fit while the embroidered motifs add an elegant dimension. Perfect for bridal veils, reception dresses, and statement evening gowns. Available in a range of sophisticated colours from classic ivory and champagne to bold jewel tones.",
       "specs": null,
       "price": 15000,
-      "images": "[\"https://placehold.co/600x800/1E3A5F/FFFFFF?text=Premium+French+Lace\",\"https://placehold.co/600x800/8B4513/FFFFFF?text=Lace+Detail\"]",
+      "images": "[\"https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=600&h=800&fit=crop\",\"https://images.unsplash.com/photo-1528459801416-a9e53bbf4e17?w=600&h=800&fit=crop\"]",
       "isActive": true
     },
     {
@@ -77,7 +77,7 @@
       "description": "Vibrant Ankara fabric featuring bold, traditional African prints on 100% premium cotton. Our Ankara is milled in Nigeria using high-quality wax print techniques that ensure deep, lasting colour. The fabric is breathable, durable, and easy to care for — making it ideal for both everyday wears and special occasions. Each pattern tells a unique story inspired by African heritage. Use it for blouses, skirts, dresses, head wraps, and bespoke tailoring. Multiple yards recommended for complete outfits.",
       "specs": null,
       "price": 5000,
-      "images": "[\"https://placehold.co/600x800/D4522A/FFFFFF?text=Classic+Ankara\",\"https://placehold.co/600x800/2E8B57/FFFFFF?text=Ankara+Pattern\"]",
+      "images": "[\"https://images.unsplash.com/photo-1590735213920-68192a487bc2?w=600&h=800&fit=crop\",\"https://images.unsplash.com/photo-1595981267035-7b04ca84a82d?w=600&h=800&fit=crop\"]",
       "isActive": true
     },
     {
@@ -88,7 +88,7 @@
       "description": "Pure mulberry silk charmeuse with an ultra-smooth, lustrous surface that drapes beautifully. This 22-momme weight silk offers the perfect balance of luxury and durability. Charmeuse silk is characterized by its satin weave construction, giving it a glossy front and matte back. Naturally temperature-regulating and hypoallergenic, this fabric glides against the skin for unparalleled comfort. Ideal for silk blouses, flowing dresses, lingerie, luxury bedding, and as lining fabric for high-end garments.",
       "specs": null,
       "price": 25000,
-      "images": "[\"https://placehold.co/600x800/C4A265/333333?text=Luxury+Silk\",\"https://placehold.co/600x800/800020/FFFFFF?text=Silk+Charmeuse\"]",
+      "images": "[\"https://images.unsplash.com/photo-1558171813-4c088753af8f?w=600&h=800&fit=crop\",\"https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=600&h=800&fit=crop\"]",
       "isActive": true
     }
   ],
