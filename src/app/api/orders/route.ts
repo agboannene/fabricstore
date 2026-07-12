@@ -50,11 +50,13 @@ export async function POST(request: NextRequest) {
         name: customer.name,
         phone: customer.phone,
         email: customer.email || null,
+        passwordHash: null,
         isReturning: false,
         firstOrderAt: null,
         lastOrderAt: null,
         totalOrders: 0,
         totalSpent: 0,
+        createdAt: new Date().toISOString(),
       });
     }
 

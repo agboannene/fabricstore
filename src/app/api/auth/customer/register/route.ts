@@ -44,6 +44,7 @@ export async function POST(request: NextRequest) {
       lastOrderAt: null,
       totalOrders: 0,
       totalSpent: 0,
+      createdAt: new Date().toISOString(),
     });
 
     const token = signToken({ id: customer.id, email: customer.email!, role: "customer", name: customer.name! } as any);
