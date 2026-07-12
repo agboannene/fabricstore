@@ -1,0 +1,263 @@
+{
+  "fabricTypes": [
+    {
+      "id": 1,
+      "name": "Lace",
+      "slug": "lace",
+      "description": "Delicate, open-weave fabric with intricate patterns. Perfect for evening wear, bridal gowns, and special occasion outfits.",
+      "isPreloaded": true
+    },
+    {
+      "id": 2,
+      "name": "Satin",
+      "slug": "satin",
+      "description": "Lustrous, smooth fabric with a glossy surface and dull back. Ideal for blouses, dresses, and elegant evening wear.",
+      "isPreloaded": true
+    },
+    {
+      "id": 3,
+      "name": "Beaded Lace",
+      "slug": "beaded-lace",
+      "description": "Hand-beaded lace with intricate embroidery and embellishments. Premium choice for luxury and ceremonial attire.",
+      "isPreloaded": true
+    },
+    {
+      "id": 4,
+      "name": "Ankara",
+      "slug": "ankara",
+      "description": "Vibrant, colourful cotton fabric with bold African prints. Durable, breathable, and perfect for everyday and ceremonial wear.",
+      "isPreloaded": true
+    },
+    {
+      "id": 5,
+      "name": "Mikado",
+      "slug": "mikado",
+      "description": "Crisp, structured fabric with a subtle sheen. A popular choice for bridal gowns, evening dresses, and tailored pieces.",
+      "isPreloaded": true
+    },
+    {
+      "id": 6,
+      "name": "Silk",
+      "slug": "silk",
+      "description": "Luxurious, natural protein fibre fabric prized for its softness, breathability, and natural sheen.",
+      "isPreloaded": true
+    },
+    {
+      "id": 7,
+      "name": "Jonkuso",
+      "slug": "jonkuso",
+      "description": "Traditional Nigerian fabric with raised textured patterns woven directly into the material. Known for its rich cultural significance.",
+      "isPreloaded": true
+    },
+    {
+      "id": 8,
+      "name": "Other",
+      "slug": "other",
+      "description": "Browse our collection of specialty fabrics including cotton, velvet, chiffon, organza, and more.",
+      "isPreloaded": true
+    }
+  ],
+  "fabrics": [
+    {
+      "id": 1,
+      "name": "Premium French Lace",
+      "slug": "premium-french-lace",
+      "fabricTypeId": 1,
+      "description": "Exquisite French lace with delicate floral patterns on a soft mesh base. Each yard features intricate scalloped edges and a luxurious drape. Our Premium French Lace is sourced directly from the finest mills in France, ensuring authentic quality. The fine netting provides a comfortable fit while the embroidered motifs add an elegant dimension. Perfect for bridal veils, reception dresses, and statement evening gowns. Available in a range of sophisticated colours from classic ivory and champagne to bold jewel tones.",
+      "specs": null,
+      "price": 15000,
+      "images": "[\"https://placehold.co/600x800/1E3A5F/FFFFFF?text=Premium+French+Lace\",\"https://placehold.co/600x800/8B4513/FFFFFF?text=Lace+Detail\"]",
+      "isActive": true
+    },
+    {
+      "id": 2,
+      "name": "Classic Ankara Print",
+      "slug": "classic-ankara-print",
+      "fabricTypeId": 4,
+      "description": "Vibrant Ankara fabric featuring bold, traditional African prints on 100% premium cotton. Our Ankara is milled in Nigeria using high-quality wax print techniques that ensure deep, lasting colour. The fabric is breathable, durable, and easy to care for — making it ideal for both everyday wears and special occasions. Each pattern tells a unique story inspired by African heritage. Use it for blouses, skirts, dresses, head wraps, and bespoke tailoring. Multiple yards recommended for complete outfits.",
+      "specs": null,
+      "price": 5000,
+      "images": "[\"https://placehold.co/600x800/D4522A/FFFFFF?text=Classic+Ankara\",\"https://placehold.co/600x800/2E8B57/FFFFFF?text=Ankara+Pattern\"]",
+      "isActive": true
+    },
+    {
+      "id": 3,
+      "name": "Luxury Silk Charmeuse",
+      "slug": "luxury-silk-charmeuse",
+      "fabricTypeId": 6,
+      "description": "Pure mulberry silk charmeuse with an ultra-smooth, lustrous surface that drapes beautifully. This 22-momme weight silk offers the perfect balance of luxury and durability. Charmeuse silk is characterized by its satin weave construction, giving it a glossy front and matte back. Naturally temperature-regulating and hypoallergenic, this fabric glides against the skin for unparalleled comfort. Ideal for silk blouses, flowing dresses, lingerie, luxury bedding, and as lining fabric for high-end garments.",
+      "specs": null,
+      "price": 25000,
+      "images": "[\"https://placehold.co/600x800/C4A265/333333?text=Luxury+Silk\",\"https://placehold.co/600x800/800020/FFFFFF?text=Silk+Charmeuse\"]",
+      "isActive": true
+    }
+  ],
+  "colourVariants": [
+    {
+      "id": 1,
+      "fabricId": 1,
+      "colourName": "Royal Blue",
+      "colourHex": "#1E3A5F",
+      "stockQuantity": 14,
+      "lowStockThreshold": 5,
+      "isActive": true
+    },
+    {
+      "id": 2,
+      "fabricId": 1,
+      "colourName": "Ivory White",
+      "colourHex": "#FFFFF0",
+      "stockQuantity": 15,
+      "lowStockThreshold": 5,
+      "isActive": true
+    },
+    {
+      "id": 3,
+      "fabricId": 1,
+      "colourName": "Burgundy",
+      "colourHex": "#7B1F3E",
+      "stockQuantity": 10,
+      "lowStockThreshold": 3,
+      "isActive": true
+    },
+    {
+      "id": 4,
+      "fabricId": 2,
+      "colourName": "Blue",
+      "colourHex": "#1565C0",
+      "stockQuantity": 22,
+      "lowStockThreshold": 5,
+      "isActive": true
+    },
+    {
+      "id": 5,
+      "fabricId": 2,
+      "colourName": "Green",
+      "colourHex": "#2E7D32",
+      "stockQuantity": 20,
+      "lowStockThreshold": 5,
+      "isActive": true
+    },
+    {
+      "id": 6,
+      "fabricId": 2,
+      "colourName": "Red",
+      "colourHex": "#C62828",
+      "stockQuantity": 18,
+      "lowStockThreshold": 3,
+      "isActive": true
+    },
+    {
+      "id": 7,
+      "fabricId": 3,
+      "colourName": "Champagne",
+      "colourHex": "#F7E7CE",
+      "stockQuantity": 12,
+      "lowStockThreshold": 3,
+      "isActive": true
+    },
+    {
+      "id": 8,
+      "fabricId": 3,
+      "colourName": "Blush Pink",
+      "colourHex": "#DEB6C1",
+      "stockQuantity": 8,
+      "lowStockThreshold": 3,
+      "isActive": true
+    }
+  ],
+  "customers": [],
+  "orders": [],
+  "orderItems": [],
+  "staffUsers": [
+    {
+      "id": 1,
+      "name": "Admin",
+      "email": "admin@fabricstore.com",
+      "passwordHash": "$2a$10$uve54PTFH4mph5WOyORF2uDhqA.9Cbf9ak2ceCIp8ArLj1CoAGjv2",
+      "role": "owner",
+      "isActive": true,
+      "lastLoginAt": "2026-07-12T10:01:21.163Z"
+    }
+  ],
+  "activityLogs": [],
+  "stockAdjustments": [],
+  "domesticDeliveryFees": [
+    {
+      "id": 1,
+      "state": "Lagos",
+      "fee": 1500
+    },
+    {
+      "id": 2,
+      "state": "Abuja",
+      "fee": 2500
+    },
+    {
+      "id": 3,
+      "state": "Rivers",
+      "fee": 3000
+    },
+    {
+      "id": 4,
+      "state": "Kano",
+      "fee": 4000
+    },
+    {
+      "id": 5,
+      "state": "Oyo",
+      "fee": 2000
+    }
+  ],
+  "internationalDeliveryFees": [
+    {
+      "id": 1,
+      "country": "United States",
+      "zone": "North America",
+      "fee": 15000
+    },
+    {
+      "id": 2,
+      "country": "United Kingdom",
+      "zone": "Europe",
+      "fee": 12000
+    },
+    {
+      "id": 3,
+      "country": "Canada",
+      "zone": "North America",
+      "fee": 15000
+    },
+    {
+      "id": 4,
+      "country": "South Africa",
+      "zone": "Africa",
+      "fee": 8000
+    },
+    {
+      "id": 5,
+      "country": "Ghana",
+      "zone": "Africa",
+      "fee": 5000
+    }
+  ],
+  "businessSettings": [
+    {
+      "key": "pod_deposit_type",
+      "value": "\"percentage\""
+    },
+    {
+      "key": "pod_deposit_value",
+      "value": "\"20\""
+    },
+    {
+      "key": "exchange_rate",
+      "value": "\"1\""
+    },
+    {
+      "key": "exchange_rate_source",
+      "value": "\"manual\""
+    }
+  ],
+  "orderStatusHistory": []
+}

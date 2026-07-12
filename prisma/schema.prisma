@@ -1,0 +1,193 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  // For production, change to:
+  // provider = "postgresql"
+  // and set DATABASE_URL in .env to your PostgreSQL connection string
+  url      = env("DATABASE_URL")
+}
+
+model FabricType {
+  id          Int      @id @default(autoincrement())
+  name        String   @unique
+  slug        String   @unique
+  description String?
+  isPreloaded Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  fabrics Fabric[]
+}
+
+model Fabric {
+  id           Int      @id @default(autoincrement())
+  fabricTypeId Int
+  name         String
+  slug         String   @unique
+  description  String?
+  specs        String?  // JSON string
+  price        Float
+  images       String   @default("[]") // JSON array of image URLs
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  fabricType     FabricType      @relation(fields: [fabricTypeId], references: [id])
+  colourVariants ColourVariant[]
+}
+
+model ColourVariant {
+  id               Int      @id @default(autoincrement())
+  fabricId         Int
+  colourName       String
+  colourHex        String?
+  stockQuantity    Int      @default(0)
+  lowStockThreshold Int     @default(5)
+  isActive         Boolean  @default(true)
+  createdAt        DateTime @default(now())
+
+  fabric          Fabric          @relation(fields: [fabricId], references: [id], onDelete: Cascade)
+  orderItems      OrderItem[]
+  stockAdjustments StockAdjustment[]
+
+  @@unique([fabricId, colourName])
+}
+
+model Customer {
+  id            Int      @id @default(autoincrement())
+  phone         String?  @unique
+  email         String?  @unique
+  name          String?
+  isReturning   Boolean  @default(false)
+  firstOrderAt  DateTime?
+  lastOrderAt   DateTime?
+  totalOrders   Int      @default(0)
+  totalSpent    Float    @default(0)
+  createdAt     DateTime @default(now())
+
+  orders Order[]
+}
+
+model Order {
+  id                 Int      @id @default(autoincrement())
+  orderIdDisplay     String   @unique
+  customerId         Int
+  status             String   @default("pending_payment")
+  paymentMethod      String
+  paymentStatus      String   @default("pending")
+  paymentCurrency    String   @default("NGN")
+  paymentAmountNgn   Float
+  deliveryFee        Float    @default(0)
+  totalAmount        Float
+  deliveryAddressLine1 String
+  deliveryAddressLine2 String?
+  deliveryCity       String
+  deliveryState      String?
+  deliveryCountry    String
+  deliveryNotes      String?
+  assignedTo         Int?
+  staffNotes         String?
+  isDomestic         Boolean
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  customer   Customer    @relation(fields: [customerId], references: [id])
+  assignedToStaff StaffUser? @relation("AssignedOrders", fields: [assignedTo], references: [id])
+  items      OrderItem[]
+  statusHistory OrderStatusHistory[]
+}
+
+model OrderItem {
+  id              Int @id @default(autoincrement())
+  orderId         Int
+  colourVariantId Int
+  quantity        Int
+  unitPrice       Float
+  subtotal        Float
+
+  order         Order         @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  colourVariant ColourVariant @relation(fields: [colourVariantId], references: [id])
+}
+
+model OrderStatusHistory {
+  id        Int      @id @default(autoincrement())
+  orderId   Int
+  fromStatus String?
+  toStatus  String
+  changedBy Int? // staff user id
+  reason    String?
+  createdAt DateTime @default(now())
+
+  order Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  changedByStaff StaffUser? @relation(fields: [changedBy], references: [id])
+}
+
+model StaffUser {
+  id           Int      @id @default(autoincrement())
+  name         String
+  email        String   @unique
+  passwordHash String
+  role         String   @default("sales_rep") // owner, manager, sales_rep, packing_staff
+  isActive     Boolean  @default(true)
+  lastLoginAt  DateTime?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  assignedOrders  Order[]              @relation("AssignedOrders")
+  activityLogs    ActivityLog[]
+  stockAdjustments StockAdjustment[]
+  statusChanges   OrderStatusHistory[]
+}
+
+model ActivityLog {
+  id          Int      @id @default(autoincrement())
+  staffUserId Int
+  actionType  String
+  entityType  String
+  entityId    String
+  description String
+  metadata    String? // JSON string
+  createdAt   DateTime @default(now())
+
+  staffUser StaffUser @relation(fields: [staffUserId], references: [id])
+}
+
+model StockAdjustment {
+  id              Int      @id @default(autoincrement())
+  colourVariantId Int
+  staffUserId     Int
+  quantityChange  Int
+  reason          String
+  referenceType   String?
+  referenceId     String?
+  createdAt       DateTime @default(now())
+
+  colourVariant ColourVariant @relation(fields: [colourVariantId], references: [id])
+  staffUser     StaffUser     @relation(fields: [staffUserId], references: [id])
+}
+
+model DomesticDeliveryFee {
+  id    Int    @id @default(autoincrement())
+  state String @unique
+  fee   Float
+}
+
+model InternationalDeliveryFee {
+  id      Int    @id @default(autoincrement())
+  country String @unique
+  zone    String?
+  fee     Float
+}
+
+model BusinessSetting {
+  id        Int      @id @default(autoincrement())
+  key       String   @unique
+  value     String   // JSON value
+  updatedBy Int?
+  updatedAt DateTime @updatedAt
+
+  updatedByStaff StaffUser? @relation(fields: [updatedBy], references: [id])
+}
