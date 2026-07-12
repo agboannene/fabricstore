@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 
 interface FabricType {
@@ -100,54 +100,102 @@ export default function CataloguePage() {
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {products.map((product) => (
-            <Link
-              key={product.id}
-              href={`/products/${product.slug}`}
-              className="group bg-white border border-neutral-200 rounded-md overflow-hidden hover:shadow-md transition-shadow no-underline"
-            >
-              <div className="aspect-[4/3] bg-neutral-100 flex items-center justify-center text-neutral-400 text-sm">
-                {product.images?.[0] ? (
-                  <img
-                    src={product.images[0]}
-                    alt={product.name}
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <span>No image</span>
-                )}
-              </div>
-              <div className="p-4">
-                <p className="text-xs text-primary-500 font-medium uppercase mb-1">
-                  {product.fabricType?.name}
-                </p>
-                <h3 className="font-semibold text-neutral-900 group-hover:text-primary-600 transition-colors">
-                  {product.name}
-                </h3>
-                <p className="text-lg font-bold text-neutral-900 mt-2">
-                  ₦{product.price.toLocaleString()}
-                </p>
-                {product.colourVariants.length > 0 && (
-                  <div className="flex gap-1 mt-2">
-                    {product.colourVariants.slice(0, 5).map((v) => (
-                      <span
-                        key={v.id}
-                        className="w-4 h-4 rounded-full border border-neutral-200"
-                        style={{ backgroundColor: v.colourHex || "#ccc" }}
-                        title={v.colourName}
-                      />
-                    ))}
-                    {product.colourVariants.length > 5 && (
-                      <span className="text-xs text-neutral-400 self-center">
-                        +{product.colourVariants.length - 5}
-                      </span>
-                    )}
-                  </div>
-                )}
-              </div>
-            </Link>
+            <ProductCard key={product.id} product={product} />
           ))}
         </div>
       )}
     </div>
+  );
+}
+
+function ProductCard({ product }: { product: Product }) {
+  const [currentImg, setCurrentImg] = useState(0);
+  const images = product.images || [];
+
+  const next = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setCurrentImg((i) => (i + 1) % images.length);
+  }, [images.length]);
+
+  const prev = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setCurrentImg((i) => (i - 1 + images.length) % images.length);
+  }, [images.length]);
+
+  return (
+    <Link
+      href={`/products/${product.slug}`}
+      className="group bg-white border border-neutral-200 rounded-md overflow-hidden hover:shadow-md transition-shadow no-underline"
+    >
+      <div className="aspect-[4/3] bg-neutral-100 flex items-center justify-center text-neutral-400 text-sm relative overflow-hidden">
+        {images.length > 0 ? (
+          <>
+            <img
+              src={images[currentImg]}
+              alt={product.name}
+              className="w-full h-full object-cover"
+            />
+            {images.length > 1 && (
+              <>
+                <button
+                  onClick={prev}
+                  className="absolute left-1 top-1/2 -translate-y-1/2 w-6 h-6 bg-white/80 hover:bg-white rounded-full text-xs flex items-center justify-center shadow opacity-0 group-hover:opacity-100 transition-opacity"
+                >
+                  ‹
+                </button>
+                <button
+                  onClick={next}
+                  className="absolute right-1 top-1/2 -translate-y-1/2 w-6 h-6 bg-white/80 hover:bg-white rounded-full text-xs flex items-center justify-center shadow opacity-0 group-hover:opacity-100 transition-opacity"
+                >
+                  ›
+                </button>
+                <div className="absolute bottom-1.5 left-1/2 -translate-x-1/2 flex gap-1">
+                  {images.map((_, i) => (
+                    <span
+                      key={i}
+                      className={`w-1.5 h-1.5 rounded-full transition-colors ${
+                        i === currentImg ? "bg-white" : "bg-white/50"
+                      }`}
+                    />
+                  ))}
+                </div>
+              </>
+            )}
+          </>
+        ) : (
+          <span>No image</span>
+        )}
+      </div>
+      <div className="p-4">
+        <p className="text-xs text-primary-500 font-medium uppercase mb-1">
+          {product.fabricType?.name}
+        </p>
+        <h3 className="font-semibold text-neutral-900 group-hover:text-primary-600 transition-colors">
+          {product.name}
+        </h3>
+        <p className="text-lg font-bold text-neutral-900 mt-2">
+          ₦{product.price.toLocaleString()}
+        </p>
+        {product.colourVariants.length > 0 && (
+          <div className="flex gap-1 mt-2">
+            {product.colourVariants.slice(0, 5).map((v) => (
+              <span
+                key={v.id}
+                className="w-4 h-4 rounded-full border border-neutral-200"
+                style={{ backgroundColor: v.colourHex || "#ccc" }}
+                title={v.colourName}
+              />
+            ))}
+            {product.colourVariants.length > 5 && (
+              <span className="text-xs text-neutral-400 self-center">
+                +{product.colourVariants.length - 5}
+              </span>
+            )}
+          </div>
+        )}
+      </div>
+    </Link>
   );
 }
