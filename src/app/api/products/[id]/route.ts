@@ -61,6 +61,7 @@ export async function PUT(
             stockQuantity: v.stockQuantity || 0,
             lowStockThreshold: v.lowStockThreshold ?? 5,
             isActive: true,
+            createdAt: new Date().toISOString(),
           });
         }
       }

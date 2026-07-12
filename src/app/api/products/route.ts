@@ -2,6 +2,7 @@ import { NextRequest } from "next/server";
 import { db } from "@/lib/db";
 import { successResponse, successResponsePaginated, errorResponse } from "@/lib/api-response";
 import { slugify } from "@/lib/utils";
+import type { Fabric } from "@/lib/types";
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
@@ -55,7 +56,7 @@ export async function POST(request: NextRequest) {
       return errorResponse("A product with this name already exists");
     }
 
-    const fabric = db.create("fabrics", {
+    const fabric = db.create<Fabric>("fabrics", {
       name,
       slug: productSlug,
       fabricTypeId,
@@ -64,6 +65,8 @@ export async function POST(request: NextRequest) {
       price: parseFloat(price),
       images: "[]",
       isActive: true,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
     });
 
     if (colourVariants && Array.isArray(colourVariants)) {
@@ -76,6 +79,7 @@ export async function POST(request: NextRequest) {
             stockQuantity: v.stockQuantity || 0,
             lowStockThreshold: v.lowStockThreshold ?? 5,
             isActive: true,
+            createdAt: new Date().toISOString(),
           });
         }
       }
