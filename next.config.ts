@@ -13,11 +13,6 @@ const nextConfig: NextConfig = {
       },
     ],
   },
-  experimental: {
-    swc: {
-      wasm: true,
-    },
-  },
 };
 
 export default nextConfig;
