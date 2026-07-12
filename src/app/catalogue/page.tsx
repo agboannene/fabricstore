@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 interface FabricType {
   id: number;
@@ -109,25 +110,14 @@ export default function CataloguePage() {
 }
 
 function ProductCard({ product }: { product: Product }) {
+  const router = useRouter();
   const [currentImg, setCurrentImg] = useState(0);
   const images = product.images || [];
 
-  const next = useCallback((e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setCurrentImg((i) => (i + 1) % images.length);
-  }, [images.length]);
-
-  const prev = useCallback((e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setCurrentImg((i) => (i - 1 + images.length) % images.length);
-  }, [images.length]);
-
   return (
-    <Link
-      href={`/products/${product.slug}`}
-      className="group bg-white border border-neutral-200 rounded-md overflow-hidden hover:shadow-md transition-shadow no-underline"
+    <div
+      className="group bg-white border border-neutral-200 rounded-md overflow-hidden hover:shadow-md transition-shadow cursor-pointer"
+      onClick={() => router.push(`/products/${product.slug}`)}
     >
       <div className="aspect-[4/3] bg-neutral-100 flex items-center justify-center text-neutral-400 text-sm relative overflow-hidden">
         {images.length > 0 ? (
@@ -140,18 +130,24 @@ function ProductCard({ product }: { product: Product }) {
             {images.length > 1 && (
               <>
                 <button
-                  onClick={prev}
-                  className="absolute left-1 top-1/2 -translate-y-1/2 w-6 h-6 bg-white/80 hover:bg-white rounded-full text-xs flex items-center justify-center shadow opacity-0 group-hover:opacity-100 transition-opacity"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setCurrentImg((i) => (i - 1 + images.length) % images.length);
+                  }}
+                  className="absolute left-1 top-1/2 -translate-y-1/2 w-7 h-7 bg-white/80 hover:bg-white rounded-full text-sm flex items-center justify-center shadow opacity-0 group-hover:opacity-100 transition-opacity z-10"
                 >
                   ‹
                 </button>
                 <button
-                  onClick={next}
-                  className="absolute right-1 top-1/2 -translate-y-1/2 w-6 h-6 bg-white/80 hover:bg-white rounded-full text-xs flex items-center justify-center shadow opacity-0 group-hover:opacity-100 transition-opacity"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setCurrentImg((i) => (i + 1) % images.length);
+                  }}
+                  className="absolute right-1 top-1/2 -translate-y-1/2 w-7 h-7 bg-white/80 hover:bg-white rounded-full text-sm flex items-center justify-center shadow opacity-0 group-hover:opacity-100 transition-opacity z-10"
                 >
                   ›
                 </button>
-                <div className="absolute bottom-1.5 left-1/2 -translate-x-1/2 flex gap-1">
+                <div className="absolute bottom-1.5 left-1/2 -translate-x-1/2 flex gap-1 z-10">
                   {images.map((_, i) => (
                     <span
                       key={i}
@@ -196,6 +192,6 @@ function ProductCard({ product }: { product: Product }) {
           </div>
         )}
       </div>
-    </Link>
+    </div>
   );
 }

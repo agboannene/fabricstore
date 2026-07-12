@@ -33,6 +33,7 @@ export default function ProductDetailPage() {
   const [loading, setLoading] = useState(true);
   const [selectedColour, setSelectedColour] = useState<ColourVariant | null>(null);
   const [quantity, setQuantity] = useState(1);
+  const [selectedImage, setSelectedImage] = useState(0);
 
   useEffect(() => {
     if (!slug) return;
@@ -70,7 +71,6 @@ export default function ProductDetailPage() {
   }
 
   const inStock = selectedColour ? selectedColour.stockQuantity > 0 : false;
-  const [selectedImage, setSelectedImage] = useState(0);
 
   return (
     <div className="max-w-7xl mx-auto px-6 py-8">
