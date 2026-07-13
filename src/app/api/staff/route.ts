@@ -9,7 +9,8 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ success: false, error: auth.error }, { status: auth.status });
   }
 
-  const staff = db.getAll<StaffUser>("staffUsers").map((u) => ({
+  const allStaff = await db.getAll<StaffUser>("staffUsers");
+  const staff = allStaff.map((u) => ({
     id: u.id,
     name: u.name,
     email: u.email,

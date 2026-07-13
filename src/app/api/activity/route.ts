@@ -13,7 +13,7 @@ export async function GET(request: NextRequest) {
   const page = parseInt(searchParams.get("page") || "1");
   const limit = parseInt(searchParams.get("limit") || "30");
 
-  let logs = db.getAll<ActivityLog>("activityLogs");
+  let logs = await db.getAll<ActivityLog>("activityLogs");
   logs.sort((a, b) => b.id - a.id);
 
   const total = logs.length;

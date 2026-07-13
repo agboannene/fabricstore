@@ -16,7 +16,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const user = db.getOneByField<StaffUser>("staffUsers", "email", email);
+    const user = await db.getOneByField<StaffUser>("staffUsers", "email", email);
     if (!user || !user.isActive) {
       return NextResponse.json(
         { success: false, error: "Invalid email or password" },
@@ -32,7 +32,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    db.update<StaffUser>("staffUsers", user.id, {
+    await db.update<StaffUser>("staffUsers", user.id, {
       lastLoginAt: new Date().toISOString(),
     } as Partial<StaffUser>);
 

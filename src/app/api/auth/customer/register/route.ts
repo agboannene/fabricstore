@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { signToken, comparePassword } from "@/lib/auth";
+import { signToken } from "@/lib/auth";
 import bcrypt from "bcryptjs";
 import { cookies } from "next/headers";
 import type { Customer } from "@/lib/types";
@@ -16,7 +16,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const existingEmail = db.getOneByField<Customer>("customers", "email", email);
+    const existingEmail = await db.getOneByField<Customer>("customers", "email", email);
     if (existingEmail) {
       return NextResponse.json(
         { success: false, error: "Email already registered" },
@@ -24,7 +24,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const existingPhone = db.getOneByField<Customer>("customers", "phone", phone);
+    const existingPhone = await db.getOneByField<Customer>("customers", "phone", phone);
     if (existingPhone) {
       return NextResponse.json(
         { success: false, error: "Phone number already registered" },
@@ -34,7 +34,7 @@ export async function POST(request: NextRequest) {
 
     const passwordHash = await bcrypt.hash(password, 10);
 
-    const customer = db.create<Customer>("customers", {
+    const customer = await db.create<Customer>("customers", {
       name,
       email,
       phone,

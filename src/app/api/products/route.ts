@@ -2,7 +2,6 @@ import { NextRequest } from "next/server";
 import { db } from "@/lib/db";
 import { successResponse, successResponsePaginated, errorResponse } from "@/lib/api-response";
 import { slugify } from "@/lib/utils";
-import type { Fabric } from "@/lib/types";
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
@@ -10,23 +9,31 @@ export async function GET(request: NextRequest) {
   const page = Math.max(1, parseInt(searchParams.get("page") || "1"));
   const limit = Math.min(100, Math.max(1, parseInt(searchParams.get("limit") || "20")));
 
-  let fabrics = db
-    .getAll<any>("fabrics")
-    .filter((f: any) => f.isActive)
-    .map((f: any) => ({
-      ...f,
-      images: JSON.parse(f.images),
-      specs: f.specs ? JSON.parse(f.specs) : null,
-      fabricType: db.getById("fabricTypes", f.fabricTypeId),
-      colourVariants: db.getByField("colourVariants", "fabricId", f.id).filter((v: any) => v.isActive),
-    }));
+  const allFabrics = await db.getAll<any>("fabrics");
+  const activeFabrics = allFabrics.filter((f: any) => f.isActive);
 
-  const search = searchParams.get("search") || "";
+  const enriched = await Promise.all(
+    activeFabrics.map(async (f: any) => {
+      const [fabricType, colourVariants] = await Promise.all([
+        db.getById("fabricTypes", f.fabricTypeId),
+        db.getByField("colourVariants", "fabricId", f.id),
+      ]);
+      return {
+        ...f,
+        images: JSON.parse(f.images),
+        specs: f.specs ? JSON.parse(f.specs) : null,
+        fabricType,
+        colourVariants: colourVariants.filter((v: any) => v.isActive),
+      };
+    })
+  );
+
+  let fabrics = enriched;
   if (typeId) {
     fabrics = fabrics.filter((f: any) => f.fabricTypeId === parseInt(typeId));
   }
-  if (search) {
-    const q = search.toLowerCase();
+  if (searchParams.get("search")) {
+    const q = searchParams.get("search")!.toLowerCase();
     fabrics = fabrics.filter(
       (f: any) =>
         f.name.toLowerCase().includes(q) ||
@@ -51,12 +58,12 @@ export async function POST(request: NextRequest) {
     }
 
     const productSlug = slug || slugify(name);
-    const existing = db.getOneByField<any>("fabrics", "slug", productSlug);
+    const existing = await db.getOneByField<any>("fabrics", "slug", productSlug);
     if (existing) {
       return errorResponse("A product with this name already exists");
     }
 
-    const fabric = db.create<Fabric>("fabrics", {
+    const fabric = await db.create<any>("fabrics", {
       name,
       slug: productSlug,
       fabricTypeId,
@@ -72,7 +79,7 @@ export async function POST(request: NextRequest) {
     if (colourVariants && Array.isArray(colourVariants)) {
       for (const v of colourVariants) {
         if (v.colourName) {
-          db.create("colourVariants", {
+          await db.create("colourVariants", {
             fabricId: fabric.id,
             colourName: v.colourName,
             colourHex: v.colourHex || null,
@@ -85,11 +92,16 @@ export async function POST(request: NextRequest) {
       }
     }
 
+    const [fabricType, variants] = await Promise.all([
+      db.getById("fabricTypes", fabric.fabricTypeId),
+      db.getByField("colourVariants", "fabricId", fabric.id),
+    ]);
+
     const result = {
       ...fabric,
       images: JSON.parse(fabric.images),
-      fabricType: db.getById("fabricTypes", fabric.fabricTypeId),
-      colourVariants: db.getByField("colourVariants", "fabricId", fabric.id),
+      fabricType,
+      colourVariants: variants,
     };
 
     return successResponse(result, 201);

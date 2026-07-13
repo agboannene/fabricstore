@@ -14,7 +14,7 @@ export async function GET(request: NextRequest) {
   const limit = parseInt(searchParams.get("limit") || "20");
   const search = searchParams.get("search") || "";
 
-  let customers = db.getAll<Customer>("customers");
+  let customers = await db.getAll<Customer>("customers");
   if (search) {
     const q = search.toLowerCase();
     customers = customers.filter(

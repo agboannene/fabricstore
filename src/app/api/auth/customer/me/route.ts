@@ -15,13 +15,13 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ success: false, error: "Not authorized" }, { status: 401 });
     }
 
-    const customer = db.getById<Customer>("customers", payload.id);
+    const customer = await db.getById<Customer>("customers", payload.id);
     if (!customer) {
       return NextResponse.json({ success: false, error: "Customer not found" }, { status: 404 });
     }
 
-    const orders = db
-      .getAll<Order>("orders")
+    const allOrders = await db.getAll<Order>("orders");
+    const orders = allOrders
       .filter((o) => o.customerId === customer.id)
       .sort((a, b) => b.id - a.id);
 

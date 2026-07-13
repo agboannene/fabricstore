@@ -10,15 +10,20 @@ export async function GET(
   const { id } = await params;
   const fabricId = parseInt(id);
 
-  const fabric = db.getById<any>("fabrics", fabricId);
+  const fabric = await db.getById<any>("fabrics", fabricId);
   if (!fabric) return errorResponse("Product not found", 404);
+
+  const [fabricType, colourVariants] = await Promise.all([
+    db.getById("fabricTypes", fabric.fabricTypeId),
+    db.getByField("colourVariants", "fabricId", fabricId),
+  ]);
 
   return successResponse({
     ...fabric,
     images: JSON.parse(fabric.images),
     specs: fabric.specs ? JSON.parse(fabric.specs) : null,
-    fabricType: db.getById("fabricTypes", fabric.fabricTypeId),
-    colourVariants: db.getByField("colourVariants", "fabricId", fabricId).filter((v: any) => v.isActive),
+    fabricType,
+    colourVariants: colourVariants.filter((v: any) => v.isActive),
   });
 }
 
@@ -32,29 +37,27 @@ export async function PUT(
     const body = await request.json();
     const { name, fabricTypeId, description, price, colourVariants } = body;
 
-    const existing = db.getById<any>("fabrics", fabricId);
+    const existing = await db.getById<any>("fabrics", fabricId);
     if (!existing) return errorResponse("Product not found", 404);
 
-    db.update("fabrics", fabricId, {
+    await db.update("fabrics", fabricId, {
       name: name || existing.name,
       slug: slugify(name || existing.name),
       fabricTypeId: fabricTypeId || existing.fabricTypeId,
       description: description !== undefined ? description : existing.description,
       price: price ? parseFloat(price) : existing.price,
+      updatedAt: new Date().toISOString(),
     });
 
-    // Replace colour variants
     if (colourVariants && Array.isArray(colourVariants)) {
-      // Remove existing
-      const existingVariants = db.getByField<any>("colourVariants", "fabricId", fabricId);
+      const existingVariants = await db.getByField<any>("colourVariants", "fabricId", fabricId);
       for (const v of existingVariants) {
-        db.delete("colourVariants", v.id);
+        await db.delete("colourVariants", v.id);
       }
 
-      // Create new
       for (const v of colourVariants) {
         if (v.colourName) {
-          db.create("colourVariants", {
+          await db.create("colourVariants", {
             fabricId,
             colourName: v.colourName,
             colourHex: v.colourHex || null,
@@ -67,12 +70,17 @@ export async function PUT(
       }
     }
 
-    const updated = db.getById<any>("fabrics", fabricId);
+    const updated = await db.getById<any>("fabrics", fabricId);
+    const [fabricType, variants] = await Promise.all([
+      db.getById("fabricTypes", updated.fabricTypeId),
+      db.getByField("colourVariants", "fabricId", fabricId),
+    ]);
+
     return successResponse({
       ...updated,
       images: JSON.parse(updated.images),
-      fabricType: db.getById("fabricTypes", updated.fabricTypeId),
-      colourVariants: db.getByField("colourVariants", "fabricId", fabricId),
+      fabricType,
+      colourVariants: variants,
     });
   } catch (error) {
     console.error("PUT /api/products/[id] error:", error);
@@ -88,10 +96,10 @@ export async function DELETE(
     const { id } = await params;
     const fabricId = parseInt(id);
 
-    const existing = db.getById<any>("fabrics", fabricId);
+    const existing = await db.getById<any>("fabrics", fabricId);
     if (!existing) return errorResponse("Product not found", 404);
 
-    db.update("fabrics", fabricId, { isActive: false });
+    await db.update("fabrics", fabricId, { isActive: false });
     return successResponse({ deleted: true });
   } catch (error) {
     console.error("DELETE /api/products/[id] error:", error);

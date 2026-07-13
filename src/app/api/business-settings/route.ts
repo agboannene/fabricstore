@@ -9,7 +9,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ success: false, error: auth.error }, { status: auth.status });
   }
 
-  const settings = db.getAll<BusinessSetting>("businessSettings");
+  const settings = await db.getAll<BusinessSetting>("businessSettings");
   return NextResponse.json({ success: true, data: settings });
 }
 
@@ -24,16 +24,15 @@ export async function PATCH(request: NextRequest) {
     return NextResponse.json({ success: false, error: "Key and value are required" }, { status: 400 });
   }
 
-  const setting = db.getOneByField<BusinessSetting>("businessSettings", "key", key);
+  const setting = await db.getOneByField<BusinessSetting>("businessSettings", "key", key);
   if (!setting) {
     return NextResponse.json({ success: false, error: "Setting not found" }, { status: 404 });
   }
 
-  db.update<BusinessSetting>("businessSettings", setting.id, {
+  await db.update<BusinessSetting>("businessSettings", setting.id, {
     value,
     updatedBy: auth.user.id,
-    updatedAt: new Date().toISOString(),
-  } as Partial<BusinessSetting>);
+  });
 
   return NextResponse.json({ success: true, data: { ...setting, value } });
 }

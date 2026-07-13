@@ -14,7 +14,7 @@ export async function GET(request: NextRequest) {
   const limit = parseInt(searchParams.get("limit") || "20");
   const status = searchParams.get("status");
 
-  let orders = db.getAll<Order>("orders");
+  let orders = await db.getAll<Order>("orders");
   if (status) {
     orders = orders.filter((o) => o.status === status);
   }
@@ -43,10 +43,9 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Find or create customer
-    let cust = db.getOneByField<Customer>("customers", "phone", customer.phone);
+    let cust = await db.getOneByField<Customer>("customers", "phone", customer.phone);
     if (!cust) {
-      cust = db.create<Customer>("customers", {
+      cust = await db.create<Customer>("customers", {
         name: customer.name,
         phone: customer.phone,
         email: customer.email || null,
@@ -60,12 +59,11 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    // Calculate totals
     let totalAmount = 0;
     const orderItems: Omit<OrderItem, "id">[] = [];
 
     for (const item of items) {
-      const variant = db.getById<ColourVariant>("colourVariants", item.colourVariantId);
+      const variant = await db.getById<ColourVariant>("colourVariants", item.colourVariantId);
       if (!variant) continue;
 
       const unitPrice = item.unitPrice || 0;
@@ -85,11 +83,10 @@ export async function POST(request: NextRequest) {
     const deliveryFee = delivery?.fee || 0;
     totalAmount += deliveryFee;
 
-    // Create order
     const now = new Date().toISOString();
     const orderIdDisplay = `ORD-${Date.now().toString(36).toUpperCase()}`;
 
-    const order = db.create<Order>("orders", {
+    const order = await db.create<Order>("orders", {
       orderIdDisplay,
       customerId: cust.id,
       status: "pending_payment",
@@ -108,29 +105,26 @@ export async function POST(request: NextRequest) {
       assignedTo: null,
       staffNotes: null,
       isDomestic: delivery?.isDomestic ?? true,
-    });
+    } as any);
 
-    // Create order items
     for (const item of orderItems) {
-      db.create<OrderItem>("orderItems", { ...item, orderId: order.id });
+      await db.create<OrderItem>("orderItems", { ...item, orderId: order.id });
     }
 
-    // Update customer stats
-    db.update<Customer>("customers", cust.id, {
+    await db.update<Customer>("customers", cust.id, {
       isReturning: cust.totalOrders > 0,
       firstOrderAt: cust.totalOrders === 0 ? now : cust.firstOrderAt,
       lastOrderAt: now,
       totalOrders: cust.totalOrders + 1,
       totalSpent: cust.totalSpent + totalAmount,
-    } as Partial<Customer>);
+    } as any);
 
-    // Decrement stock
     for (const item of items) {
-      const variant = db.getById<ColourVariant>("colourVariants", item.colourVariantId);
+      const variant = await db.getById<ColourVariant>("colourVariants", item.colourVariantId);
       if (variant) {
-        db.update<ColourVariant>("colourVariants", variant.id, {
+        await db.update<ColourVariant>("colourVariants", variant.id, {
           stockQuantity: Math.max(0, variant.stockQuantity - (item.quantity || 1)),
-        } as Partial<ColourVariant>);
+        } as any);
       }
     }
 

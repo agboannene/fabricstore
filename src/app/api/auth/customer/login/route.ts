@@ -16,7 +16,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const customer = db.getOneByField<Customer>("customers", "email", email);
+    const customer = await db.getOneByField<Customer>("customers", "email", email);
     if (!customer || !customer.passwordHash) {
       return NextResponse.json(
         { success: false, error: "Invalid email or password" },
