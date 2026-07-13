@@ -1,5 +1,4 @@
-import fs from "fs";
-import path from "path";
+import { prisma } from "./prisma";
 
 type TableName =
   | "fabricTypes"
@@ -16,96 +15,60 @@ type TableName =
   | "businessSettings"
   | "orderStatusHistory";
 
-let data: Record<string, any[]> = {};
-
-function getFilePath(): string {
-  return path.join(process.cwd(), "data", "db.json");
+function getModel(table: TableName) {
+  const map: Record<TableName, any> = {
+    fabricTypes: prisma.fabricType,
+    fabrics: prisma.fabric,
+    colourVariants: prisma.colourVariant,
+    customers: prisma.customer,
+    orders: prisma.order,
+    orderItems: prisma.orderItem,
+    staffUsers: prisma.staffUser,
+    activityLogs: prisma.activityLog,
+    stockAdjustments: prisma.stockAdjustment,
+    domesticDeliveryFees: prisma.domesticDeliveryFee,
+    internationalDeliveryFees: prisma.internationalDeliveryFee,
+    businessSettings: prisma.businessSetting,
+    orderStatusHistory: prisma.orderStatusHistory,
+  };
+  return map[table];
 }
 
-function load(): void {
-  const filePath = getFilePath();
-  if (fs.existsSync(filePath)) {
-    try {
-      data = JSON.parse(fs.readFileSync(filePath, "utf-8"));
-    } catch {
-      data = {};
-    }
-  }
-  // Ensure all tables exist
-  const tables: TableName[] = [
-    "fabricTypes", "fabrics", "colourVariants", "customers",
-    "orders", "orderItems", "staffUsers", "activityLogs",
-    "stockAdjustments", "domesticDeliveryFees", "internationalDeliveryFees",
-    "businessSettings", "orderStatusHistory",
-  ];
-  for (const table of tables) {
-    if (!data[table]) data[table] = [];
-  }
-}
-
-function save(): void {
-  const dir = path.dirname(getFilePath());
-  if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-  fs.writeFileSync(getFilePath(), JSON.stringify(data, null, 2));
-}
-
-// Initialize
-load();
-
-// Public API
 export const db = {
-  getAll<T>(table: TableName): T[] {
-    return data[table] as T[];
+  async getAll<T>(table: TableName): Promise<T[]> {
+    return getModel(table).findMany() as Promise<T[]>;
   },
 
-  getById<T extends { id: number }>(table: TableName, id: number): T | undefined {
-    return (data[table] as T[]).find((item: any) => item.id === id);
+  async getById<T>(table: TableName, id: number): Promise<T | null> {
+    return getModel(table).findUnique({ where: { id } }) as Promise<T | null>;
   },
 
-  getByField<T>(table: TableName, field: string, value: any): T[] {
-    return (data[table] as T[]).filter((item: any) => item[field] === value) as T[];
+  async getByField<T>(table: TableName, field: string, value: any): Promise<T[]> {
+    return getModel(table).findMany({ where: { [field]: value } }) as Promise<T[]>;
   },
 
-  getOneByField<T>(table: TableName, field: string, value: any): T | undefined {
-    return (data[table] as T[]).find((item: any) => item[field] === value) as T | undefined;
+  async getOneByField<T>(table: TableName, field: string, value: any): Promise<T | null> {
+    return getModel(table).findFirst({ where: { [field]: value } }) as Promise<T | null>;
   },
 
-  create<T extends { id: number }>(table: TableName, item: Omit<T, "id">): T {
-    const items = data[table] as any[];
-    const maxId = items.reduce((max, curr) => Math.max(max, curr.id || 0), 0);
-    const newItem = { ...item, id: maxId + 1 } as T;
-    items.push(newItem);
-    save();
-    return newItem;
+  async create<T>(table: TableName, item: any): Promise<T> {
+    return getModel(table).create({ data: item }) as Promise<T>;
   },
 
-  update<T>(table: TableName, id: number, updates: Partial<T>): T | undefined {
-    const items = data[table] as any[];
-    const index = items.findIndex((item: any) => item.id === id);
-    if (index === -1) return undefined;
-    items[index] = { ...items[index], ...updates };
-    save();
-    return items[index] as T;
+  async update<T>(table: TableName, id: number, updates: any): Promise<T | null> {
+    return getModel(table).update({ where: { id }, data: updates }) as Promise<T | null>;
   },
 
-  delete(table: TableName, id: number): boolean {
-    const items = data[table] as any[];
-    const index = items.findIndex((item: any) => item.id === id);
-    if (index === -1) return false;
-    items.splice(index, 1);
-    save();
-    return true;
-  },
-
-  count(table: TableName): number {
-    return (data[table] as any[]).length;
-  },
-
-  reset(seedData: Record<string, any[]>): void {
-    data = {};
-    for (const [key, items] of Object.entries(seedData)) {
-      data[key] = JSON.parse(JSON.stringify(items));
+  async delete(table: TableName, id: number): Promise<boolean> {
+    try {
+      await getModel(table).delete({ where: { id } });
+      return true;
+    } catch {
+      return false;
     }
-    save();
+  },
+
+  async count(table: TableName): Promise<number> {
+    return getModel(table).count();
   },
 };

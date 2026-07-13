@@ -1,0 +1,164 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DATABASE_URL_UNPOOLED")
+}
+
+model StaffUser {
+  id           Int      @id @default(autoincrement())
+  name         String
+  email        String   @unique
+  passwordHash String
+  role         String   @default("sales_rep")
+  isActive     Boolean  @default(true)
+  lastLoginAt  String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model FabricType {
+  id          Int      @id @default(autoincrement())
+  name        String
+  slug        String   @unique
+  description String?
+  isPreloaded Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  fabrics     Fabric[]
+}
+
+model Fabric {
+  id           Int      @id @default(autoincrement())
+  fabricTypeId Int
+  name         String
+  slug         String   @unique
+  description  String?
+  specs        String?
+  price        Float
+  images       String   @default("[]")
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  fabricType   FabricType @relation(fields: [fabricTypeId], references: [id])
+  colourVariants ColourVariant[]
+}
+
+model ColourVariant {
+  id               Int      @id @default(autoincrement())
+  fabricId         Int
+  colourName       String
+  colourHex        String?
+  stockQuantity    Int      @default(0)
+  lowStockThreshold Int     @default(5)
+  isActive         Boolean  @default(true)
+  createdAt        DateTime @default(now())
+  fabric           Fabric   @relation(fields: [fabricId], references: [id])
+  orderItems       OrderItem[]
+}
+
+model Customer {
+  id            Int      @id @default(autoincrement())
+  phone         String?
+  email         String?
+  name          String?
+  passwordHash  String?
+  isReturning   Boolean  @default(false)
+  firstOrderAt  String?
+  lastOrderAt   String?
+  totalOrders   Int      @default(0)
+  totalSpent    Float    @default(0)
+  createdAt     DateTime @default(now())
+  orders        Order[]
+}
+
+model Order {
+  id                   Int      @id @default(autoincrement())
+  orderIdDisplay       String
+  customerId           Int
+  status               String   @default("pending_payment")
+  paymentMethod        String   @default("pay_on_delivery")
+  paymentStatus        String   @default("pending")
+  paymentCurrency      String   @default("NGN")
+  paymentAmountNgn     Float    @default(0)
+  deliveryFee          Float    @default(0)
+  totalAmount          Float
+  deliveryAddressLine1 String   @default("")
+  deliveryAddressLine2 String?
+  deliveryCity         String   @default("")
+  deliveryState        String?
+  deliveryCountry      String   @default("Nigeria")
+  deliveryNotes        String?
+  assignedTo           Int?
+  staffNotes           String?
+  isDomestic           Boolean  @default(true)
+  createdAt            DateTime @default(now())
+  customer             Customer @relation(fields: [customerId], references: [id])
+  items                OrderItem[]
+  statusHistory        OrderStatusHistory[]
+}
+
+model OrderItem {
+  id               Int      @id @default(autoincrement())
+  orderId          Int
+  colourVariantId  Int
+  quantity         Int
+  unitPrice        Float
+  subtotal         Float
+  order            Order            @relation(fields: [orderId], references: [id])
+  colourVariant    ColourVariant    @relation(fields: [colourVariantId], references: [id])
+}
+
+model OrderStatusHistory {
+  id        Int      @id @default(autoincrement())
+  orderId   Int
+  fromStatus String?
+  toStatus  String
+  changedBy Int?
+  reason    String?
+  createdAt DateTime @default(now())
+  order     Order    @relation(fields: [orderId], references: [id])
+}
+
+model ActivityLog {
+  id           Int      @id @default(autoincrement())
+  staffUserId  Int
+  actionType   String
+  entityType   String
+  entityId     String
+  description  String
+  metadata     String?
+  createdAt    DateTime @default(now())
+}
+
+model StockAdjustment {
+  id               Int      @id @default(autoincrement())
+  colourVariantId  Int
+  quantityChange   Int
+  reason           String
+  createdAt        DateTime @default(now())
+}
+
+model DomesticDeliveryFee {
+  id    Int    @id @default(autoincrement())
+  state String @unique
+  fee   Float
+}
+
+model InternationalDeliveryFee {
+  id      Int    @id @default(autoincrement())
+  country String
+  zone    String?
+  fee     Float
+}
+
+model BusinessSetting {
+  id        Int      @id @default(autoincrement())
+  key       String   @unique
+  value     String
+  updatedBy Int?
+  updatedAt DateTime @updatedAt
+}
