@@ -85,7 +85,7 @@ export default function ProductDetailPage() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         {/* Image Gallery */}
         <div>
-          <div className="aspect-[3/4] bg-neutral-100 rounded-md flex items-center justify-center text-neutral-400 overflow-hidden">
+          <div className="aspect-[3/4] bg-neutral-100 rounded-md flex items-center justify-center text-neutral-400 overflow-hidden relative">
             {product.images?.[selectedImage] ? (
               <img
                 src={product.images[selectedImage]}
@@ -94,6 +94,32 @@ export default function ProductDetailPage() {
               />
             ) : (
               <span>No image available</span>
+            )}
+            {product.images && product.images.length > 1 && (
+              <>
+                <button
+                  onClick={() => setSelectedImage((i) => (i - 1 + product.images.length) % product.images.length)}
+                  className="absolute left-3 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/80 hover:bg-white rounded-full text-lg flex items-center justify-center shadow transition-colors"
+                >
+                  ‹
+                </button>
+                <button
+                  onClick={() => setSelectedImage((i) => (i + 1) % product.images.length)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/80 hover:bg-white rounded-full text-lg flex items-center justify-center shadow transition-colors"
+                >
+                  ›
+                </button>
+                <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5 bg-white/70 rounded-full px-2.5 py-1">
+                  {product.images.map((_, i) => (
+                    <span
+                      key={i}
+                      className={`w-2 h-2 rounded-full transition-colors ${
+                        i === selectedImage ? "bg-neutral-900" : "bg-neutral-400"
+                      }`}
+                    />
+                  ))}
+                </div>
+              </>
             )}
           </div>
           {product.images && product.images.length > 1 && (
