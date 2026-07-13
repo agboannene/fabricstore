@@ -74,10 +74,10 @@
       "name": "Classic Ankara Print",
       "slug": "classic-ankara-print",
       "fabricTypeId": 4,
-      "description": "Vibrant Ankara fabric featuring bold, traditional African prints on 100% premium cotton. Our Ankara is milled in Nigeria using high-quality wax print techniques that ensure deep, lasting colour. The fabric is breathable, durable, and easy to care for — making it ideal for both everyday wears and special occasions. Each pattern tells a unique story inspired by African heritage. Use it for blouses, skirts, dresses, head wraps, and bespoke tailoring. Multiple yards recommended for complete outfits.",
+      "description": "Vibrant Ankara fabric featuring bold, traditional African wax prints on 100% premium cotton. Our collection includes a wide variety of patterns — from peacock motifs and geometric dots to swirls and floral designs. Milled using high-quality wax print techniques that ensure deep, lasting colour. The fabric is breathable, durable, and easy to care for — making it ideal for both everyday wears and special occasions. Each pattern tells a unique story inspired by African heritage. Use it for blouses, skirts, dresses, head wraps, and bespoke tailoring.",
       "specs": null,
       "price": 5000,
-      "images": "[\"/fabrics/ankara.jpg\"]",
+      "images": "[\"/fabrics/ankara.jpg\",\"/fabrics/ankara-green.jpg\",\"/fabrics/ankara-purple.jpg\",\"/fabrics/ankara-orange-purple.jpg\",\"/fabrics/ankara-green-dots.jpg\",\"/fabrics/ankara-blue.jpg\"]",
       "isActive": true
     },
     {
