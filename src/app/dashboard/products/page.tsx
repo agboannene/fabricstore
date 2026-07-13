@@ -4,19 +4,27 @@ import { ProductManager } from "./product-manager";
 export const dynamic = "force-dynamic";
 
 export default async function ProductsPage() {
-  const fabrics = db
-    .getAll<any>("fabrics")
-    .filter((f: any) => f.isActive)
-    .map((f: any) => ({
-      ...f,
-      images: JSON.parse(f.images),
-      specs: f.specs ? JSON.parse(f.specs) : null,
-      fabricType: db.getById("fabricTypes", f.fabricTypeId),
-      colourVariants: db.getByField("colourVariants", "fabricId", f.id).filter((v: any) => v.isActive),
-    }))
-    .sort((a: any, b: any) => b.id - a.id);
+  const allFabrics = await db.getAll<any>("fabrics");
+  const activeFabrics = allFabrics.filter((f: any) => f.isActive);
 
-  const fabricTypes = db.getAll<any>("fabricTypes");
+  const fabrics = await Promise.all(
+    activeFabrics.map(async (f: any) => {
+      const [fabricType, colourVariants] = await Promise.all([
+        db.getById("fabricTypes", f.fabricTypeId),
+        db.getByField("colourVariants", "fabricId", f.id),
+      ]);
+      return {
+        ...f,
+        images: JSON.parse(f.images),
+        specs: f.specs ? JSON.parse(f.specs) : null,
+        fabricType,
+        colourVariants: colourVariants.filter((v: any) => v.isActive),
+      };
+    })
+  );
+  fabrics.sort((a: any, b: any) => b.id - a.id);
+
+  const fabricTypes = await db.getAll<any>("fabricTypes");
 
   return (
     <div>
