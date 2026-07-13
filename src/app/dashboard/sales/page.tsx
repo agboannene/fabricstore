@@ -1,8 +1,10 @@
 import { db } from "@/lib/db";
 import type { Order } from "@/lib/types";
 
-export default function SalesPage() {
-  const orders = db.getAll<Order>("orders");
+export const dynamic = "force-dynamic";
+
+export default async function SalesPage() {
+  const orders = await db.getAll<Order>("orders");
   const totalRevenue = orders
     .filter((o) => o.status !== "cancelled")
     .reduce((sum, o) => sum + o.totalAmount, 0);
