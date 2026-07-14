@@ -3,9 +3,11 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useCustomerAuth } from "@/lib/customer-auth-context";
 
 export default function RegisterPage() {
   const router = useRouter();
+  const { refresh } = useCustomerAuth();
   const [form, setForm] = useState({ name: "", email: "", phone: "", password: "" });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -33,8 +35,8 @@ export default function RegisterPage() {
         return;
       }
 
+      await refresh();
       router.push("/account");
-      router.refresh();
     } catch {
       setError("Network error. Please try again.");
     } finally {

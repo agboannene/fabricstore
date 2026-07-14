@@ -13,6 +13,7 @@ interface CustomerUser {
 interface CustomerAuthContextType {
   customer: CustomerUser | null;
   loading: boolean;
+  refresh: () => Promise<void>;
   logout: () => Promise<void>;
 }
 
@@ -23,14 +24,21 @@ export function CustomerAuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("/api/auth/customer/me")
-      .then((r) => r.json())
-      .then((d) => {
-        if (d.success) setCustomer(d.data);
-      })
-      .catch(() => {})
-      .finally(() => setLoading(false));
+    refresh();
   }, []);
+
+  async function refresh() {
+    try {
+      const r = await fetch("/api/auth/customer/me");
+      const d = await r.json();
+      if (d.success) setCustomer(d.data);
+      else setCustomer(null);
+    } catch {
+      setCustomer(null);
+    } finally {
+      setLoading(false);
+    }
+  }
 
   async function logout() {
     await fetch("/api/auth/customer/logout", { method: "POST" });
@@ -38,7 +46,7 @@ export function CustomerAuthProvider({ children }: { children: ReactNode }) {
   }
 
   return (
-    <CustomerAuthContext.Provider value={{ customer, loading, logout }}>
+    <CustomerAuthContext.Provider value={{ customer, loading, refresh, logout }}>
       {children}
     </CustomerAuthContext.Provider>
   );

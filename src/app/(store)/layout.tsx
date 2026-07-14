@@ -74,7 +74,10 @@ export default function StoreLayout({
             </div>
           </div>
           <div className="max-w-7xl mx-auto mt-8 pt-6 border-t border-white/20 text-center text-sm text-white/50">
-            &copy; {new Date().getFullYear()} FabricStore. All rights reserved.
+            &copy; {new Date().getFullYear()} FabricStore. All rights reserved.{" "}
+            <Link href="/dashboard/login" className="text-white/30 hover:text-white/60 ml-2">
+              Staff Login
+            </Link>
           </div>
         </footer>
       </CustomerAuthProvider>
