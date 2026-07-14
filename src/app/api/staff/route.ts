@@ -4,7 +4,7 @@ import { authenticateRequest } from "@/lib/auth";
 import type { StaffUser } from "@/lib/types";
 
 export async function GET(request: NextRequest) {
-  const auth = authenticateRequest(request);
+  const auth = await authenticateRequest(request);
   if ("error" in auth) {
     return NextResponse.json({ success: false, error: auth.error }, { status: auth.status });
   }

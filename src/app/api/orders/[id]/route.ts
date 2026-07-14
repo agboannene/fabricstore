@@ -4,7 +4,7 @@ import { authenticateRequest } from "@/lib/auth";
 import type { Order, OrderItem, OrderStatusHistory } from "@/lib/types";
 
 export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  const auth = authenticateRequest(request);
+  const auth = await authenticateRequest(request);
   if ("error" in auth) {
     return NextResponse.json({ success: false, error: auth.error }, { status: auth.status });
   }
@@ -23,7 +23,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
 }
 
 export async function PATCH(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  const auth = authenticateRequest(request);
+  const auth = await authenticateRequest(request);
   if ("error" in auth) {
     return NextResponse.json({ success: false, error: auth.error }, { status: auth.status });
   }

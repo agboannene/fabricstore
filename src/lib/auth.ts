@@ -66,8 +66,8 @@ export async function comparePassword(plain: string, hash: string): Promise<bool
   return bcrypt.compare(plain, hash);
 }
 
-export function getStaffUserFromPayload(payload: JwtPayload): StaffUser | undefined {
-  return db.getById<StaffUser>("staffUsers", payload.staffUserId);
+export async function getStaffUserFromPayload(payload: JwtPayload): Promise<StaffUser | undefined> {
+  return (await db.getById<StaffUser>("staffUsers", payload.staffUserId)) || undefined;
 }
 
 export function getTokenFromRequest(request: Request): string | null {
@@ -81,13 +81,13 @@ export function getTokenFromRequest(request: Request): string | null {
   return null;
 }
 
-export function authenticateRequest(request: Request): { user: StaffUser; payload: JwtPayload } | { error: string; status: number } {
+export async function authenticateRequest(request: Request): Promise<{ user: StaffUser; payload: JwtPayload } | { error: string; status: number }> {
   const token = getTokenFromRequest(request);
   if (!token) return { error: "Authentication required", status: 401 };
 
   try {
     const payload = verifyToken(token);
-    const user = getStaffUserFromPayload(payload);
+    const user = await getStaffUserFromPayload(payload);
     if (!user || !user.isActive) return { error: "User not found or inactive", status: 401 };
     return { user, payload };
   } catch {

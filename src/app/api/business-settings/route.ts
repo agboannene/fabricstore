@@ -4,7 +4,7 @@ import { authenticateRequest } from "@/lib/auth";
 import type { BusinessSetting } from "@/lib/types";
 
 export async function GET(request: NextRequest) {
-  const auth = authenticateRequest(request);
+  const auth = await authenticateRequest(request);
   if ("error" in auth) {
     return NextResponse.json({ success: false, error: auth.error }, { status: auth.status });
   }
@@ -14,7 +14,7 @@ export async function GET(request: NextRequest) {
 }
 
 export async function PATCH(request: NextRequest) {
-  const auth = authenticateRequest(request);
+  const auth = await authenticateRequest(request);
   if ("error" in auth) {
     return NextResponse.json({ success: false, error: auth.error }, { status: auth.status });
   }

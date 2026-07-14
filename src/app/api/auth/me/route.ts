@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { authenticateRequest } from "@/lib/auth";
 
 export async function GET(request: NextRequest) {
-  const result = authenticateRequest(request);
+  const result = await authenticateRequest(request);
 
   if ("error" in result) {
     return NextResponse.json(
