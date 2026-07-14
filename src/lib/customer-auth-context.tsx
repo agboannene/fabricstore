@@ -13,6 +13,7 @@ interface CustomerUser {
 interface CustomerAuthContextType {
   customer: CustomerUser | null;
   loading: boolean;
+  setCustomer: (user: CustomerUser | null) => void;
   refresh: () => Promise<void>;
   logout: () => Promise<void>;
 }
@@ -46,7 +47,7 @@ export function CustomerAuthProvider({ children }: { children: ReactNode }) {
   }
 
   return (
-    <CustomerAuthContext.Provider value={{ customer, loading, refresh, logout }}>
+    <CustomerAuthContext.Provider value={{ customer, loading, setCustomer, refresh, logout }}>
       {children}
     </CustomerAuthContext.Provider>
   );

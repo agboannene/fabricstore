@@ -7,7 +7,7 @@ import { useCustomerAuth } from "@/lib/customer-auth-context";
 
 export default function RegisterPage() {
   const router = useRouter();
-  const { refresh } = useCustomerAuth();
+  const { setCustomer } = useCustomerAuth();
   const [form, setForm] = useState({ name: "", email: "", phone: "", password: "" });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -35,7 +35,7 @@ export default function RegisterPage() {
         return;
       }
 
-      await refresh();
+      setCustomer(data.data);
       router.push("/account");
     } catch {
       setError("Network error. Please try again.");
