@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button, Input, Badge, Modal } from "@/components/ui";
 import { formatCurrency, slugify } from "@/lib/utils";
+import ImageUpload from "@/components/ImageUpload";
 
 interface FabricType {
   id: number;
@@ -48,6 +49,7 @@ export function ProductManager({ fabrics, fabricTypes }: Props) {
     fabricTypeId: fabricTypes[0]?.id || 0,
     description: "",
     price: "",
+    images: [] as string[],
     colourVariants: [{ colourName: "", colourHex: "#000000", stockQuantity: 0, lowStockThreshold: 5 }],
   });
 
@@ -57,6 +59,7 @@ export function ProductManager({ fabrics, fabricTypes }: Props) {
       fabricTypeId: fabricTypes[0]?.id || 0,
       description: "",
       price: "",
+      images: [],
       colourVariants: [{ colourName: "", colourHex: "#000000", stockQuantity: 0, lowStockThreshold: 5 }],
     });
     setEditingId(null);
@@ -64,11 +67,13 @@ export function ProductManager({ fabrics, fabricTypes }: Props) {
   }
 
   function openEdit(fabric: Fabric) {
+    const parsedImages = typeof fabric.images === "string" ? JSON.parse(fabric.images) : fabric.images;
     setForm({
       name: fabric.name,
       fabricTypeId: fabric.fabricType.id,
       description: fabric.description || "",
       price: String(fabric.price),
+      images: parsedImages || [],
       colourVariants: fabric.colourVariants.map((v) => ({
         colourName: v.colourName,
         colourHex: v.colourHex || "#000000",
@@ -124,6 +129,7 @@ export function ProductManager({ fabrics, fabricTypes }: Props) {
       fabricTypeId: form.fabricTypeId,
       description: form.description,
       price,
+      images: form.images,
       colourVariants: form.colourVariants.filter((v) => v.colourName),
     };
 
@@ -371,6 +377,14 @@ export function ProductManager({ fabrics, fabricTypes }: Props) {
             required
             dashboard
           />
+
+          <div className="flex flex-col gap-1">
+            <label className="text-xs font-medium text-neutral-800">Product Images</label>
+            <ImageUpload
+              images={form.images}
+              onChange={(images) => setForm((f) => ({ ...f, images }))}
+            />
+          </div>
 
           {/* Colour Variants */}
           <div>

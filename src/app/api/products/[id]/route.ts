@@ -35,7 +35,7 @@ export async function PUT(
     const { id } = await params;
     const fabricId = parseInt(id);
     const body = await request.json();
-    const { name, fabricTypeId, description, price, colourVariants } = body;
+    const { name, fabricTypeId, description, price, images, colourVariants } = body;
 
     const existing = await db.getById<any>("fabrics", fabricId);
     if (!existing) return errorResponse("Product not found", 404);
@@ -46,6 +46,7 @@ export async function PUT(
       fabricTypeId: fabricTypeId || existing.fabricTypeId,
       description: description !== undefined ? description : existing.description,
       price: price ? parseFloat(price) : existing.price,
+      images: images !== undefined ? JSON.stringify(images) : existing.images,
       updatedAt: new Date().toISOString(),
     });
 

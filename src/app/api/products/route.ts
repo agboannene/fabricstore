@@ -51,7 +51,7 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { name, slug, fabricTypeId, description, price, colourVariants } = body;
+    const { name, slug, fabricTypeId, description, price, images, colourVariants } = body;
 
     if (!name || !price || !fabricTypeId) {
       return errorResponse("Name, price, and fabric type are required");
@@ -70,7 +70,7 @@ export async function POST(request: NextRequest) {
       description: description || null,
       specs: null,
       price: parseFloat(price),
-      images: "[]",
+      images: JSON.stringify(images || []),
       isActive: true,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
