@@ -17,6 +17,19 @@ model StaffUser {
   lastLoginAt  String?
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
+  attendances  StaffAttendance[]
+}
+
+model StaffAttendance {
+  id          Int      @id @default(autoincrement())
+  staffUserId Int
+  clockIn     DateTime
+  clockOut    DateTime?
+  date        String
+  createdAt   DateTime @default(now())
+  staffUser   StaffUser @relation(fields: [staffUserId], references: [id])
+
+  @@unique([staffUserId, date])
 }
 
 model FabricType {

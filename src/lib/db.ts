@@ -14,7 +14,8 @@ type TableName =
   | "internationalDeliveryFees"
     | "businessSettings"
     | "orderStatusHistory"
-    | "passwordResetTokens";
+    | "passwordResetTokens"
+    | "staffAttendances";
 
 function getModel(table: TableName) {
   const map: Record<TableName, any> = {
@@ -32,6 +33,7 @@ function getModel(table: TableName) {
     businessSettings: prisma.businessSetting,
     orderStatusHistory: prisma.orderStatusHistory,
     passwordResetTokens: prisma.passwordResetToken,
+    staffAttendances: prisma.staffAttendance,
   };
   return map[table];
 }

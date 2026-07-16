@@ -152,3 +152,13 @@ CREATE TABLE IF NOT EXISTS "PasswordResetToken" (
   used BOOLEAN NOT NULL DEFAULT false,
   "createdAt" TIMESTAMP NOT NULL DEFAULT now()
 );
+
+CREATE TABLE IF NOT EXISTS "StaffAttendance" (
+  id SERIAL PRIMARY KEY,
+  "staffUserId" INTEGER NOT NULL REFERENCES "StaffUser"(id),
+  "clockIn" TIMESTAMP NOT NULL,
+  "clockOut" TIMESTAMP,
+  date TEXT NOT NULL,
+  "createdAt" TIMESTAMP NOT NULL DEFAULT now(),
+  UNIQUE ("staffUserId", date)
+);
