@@ -60,18 +60,20 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       .then((r) => r.json())
       .then((d) => {
         if (!d.success) {
-          router.push("/dashboard/login");
+          window.location.href = "/dashboard/login";
           return;
         }
         setStaff(d.data.user);
+        setLoading(false);
         return fetch("/api/staff/attendance/today");
       })
       .then((r) => r?.json())
       .then((d) => {
         if (d?.success) setAttendance(d.data);
       })
-      .catch(() => router.push("/dashboard/login"))
-      .finally(() => setLoading(false));
+      .catch(() => {
+        window.location.href = "/dashboard/login";
+      });
   }, [pathname, router]);
 
   async function handleClockIn() {
