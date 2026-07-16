@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Script from "next/script";
 import { CartProvider } from "@/lib/cart-context";
 import { CustomerAuthProvider } from "@/lib/customer-auth-context";
 import CartLink from "./cart-link";
@@ -13,6 +14,7 @@ export default function StoreLayout({
   return (
     <CartProvider>
       <CustomerAuthProvider>
+        <Script src="https://js.paystack.co/v1/inline.js" strategy="lazyOnload" />
         <header className="fixed top-0 left-0 right-0 h-16 bg-primary-500 text-white z-[300] flex items-center justify-between px-6">
           <Link
             href="/"

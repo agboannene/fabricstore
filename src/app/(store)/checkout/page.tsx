@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCart } from "@/lib/cart-context";
+import PaystackButton from "@/components/PaystackButton";
 
 interface DomesticFee {
   state: string;
@@ -27,6 +28,7 @@ export default function CheckoutPage() {
   const [deliveryFee, setDeliveryFee] = useState(0);
   const [submitting, setSubmitting] = useState(false);
   const [done, setDone] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState<"pay_on_delivery" | "paystack">("paystack");
 
   const [form, setForm] = useState({
     name: "",
@@ -63,52 +65,62 @@ export default function CheckoutPage() {
 
   const total = subtotal + deliveryFee;
 
+  async function createOrder(): Promise<string | null> {
+    const res = await fetch("/api/orders", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        customer: {
+          name: form.name,
+          phone: form.phone,
+          email: form.email || undefined,
+        },
+        items: items.map((i) => ({
+          colourVariantId: i.colourVariantId,
+          quantity: i.quantity,
+          unitPrice: i.unitPrice,
+        })),
+        delivery: {
+          addressLine1: form.addressLine1,
+          addressLine2: form.addressLine2 || undefined,
+          city: form.city,
+          state: form.state,
+          country: form.country,
+          isDomestic,
+          fee: deliveryFee,
+        },
+        paymentMethod,
+        notes: form.notes || undefined,
+      }),
+    });
+    const data = await res.json();
+    if (data.success) return data.data.orderIdDisplay;
+    return null;
+  }
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!items.length) return;
 
     setSubmitting(true);
     try {
-      const res = await fetch("/api/orders", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          customer: {
-            name: form.name,
-            phone: form.phone,
-            email: form.email || undefined,
-          },
-          items: items.map((i) => ({
-            colourVariantId: i.colourVariantId,
-            quantity: i.quantity,
-            unitPrice: i.unitPrice,
-          })),
-          delivery: {
-            addressLine1: form.addressLine1,
-            addressLine2: form.addressLine2 || undefined,
-            city: form.city,
-            state: form.state,
-            country: form.country,
-            isDomestic,
-            fee: deliveryFee,
-          },
-          paymentMethod: "pay_on_delivery",
-          notes: form.notes || undefined,
-        }),
-      });
-
-      const data = await res.json();
-      if (data.success) {
+      const id = await createOrder();
+      if (id) {
         clearCart();
         setDone(true);
       } else {
-        alert(data.error || "Failed to place order");
+        alert("Failed to place order");
       }
     } catch {
       alert("Network error. Please try again.");
     } finally {
       setSubmitting(false);
     }
+  }
+
+  function handlePaystackSuccess(reference: string) {
+    clearCart();
+    router.push(`/checkout/success?reference=${reference}`);
   }
 
   if (!items.length && !done) {
@@ -145,7 +157,6 @@ export default function CheckoutPage() {
       <h1 className="text-h2 font-heading font-bold text-neutral-900 mb-8">Checkout</h1>
 
       <div className="grid grid-cols-1 md:grid-cols-5 gap-8">
-        {/* Form */}
         <form onSubmit={handleSubmit} className="md:col-span-3 flex flex-col gap-4">
           <div className="bg-white border border-neutral-200 rounded-md p-4">
             <h2 className="font-semibold text-neutral-900 mb-4">Contact</h2>
@@ -166,13 +177,25 @@ export default function CheckoutPage() {
                 className="h-10 px-3 border border-neutral-300 rounded-md text-sm"
                 required
               />
-              <input
-                type="email"
-                placeholder="Email (optional)"
-                value={form.email}
-                onChange={(e) => setForm({ ...form, email: e.target.value })}
-                className="h-10 px-3 border border-neutral-300 rounded-md text-sm"
-              />
+              {paymentMethod === "paystack" && (
+                <input
+                  type="email"
+                  placeholder="Email (required for online payment)"
+                  value={form.email}
+                  onChange={(e) => setForm({ ...form, email: e.target.value })}
+                  className="h-10 px-3 border border-neutral-300 rounded-md text-sm"
+                  required
+                />
+              )}
+              {paymentMethod === "pay_on_delivery" && (
+                <input
+                  type="email"
+                  placeholder="Email (optional)"
+                  value={form.email}
+                  onChange={(e) => setForm({ ...form, email: e.target.value })}
+                  className="h-10 px-3 border border-neutral-300 rounded-md text-sm"
+                />
+              )}
             </div>
           </div>
 
@@ -272,13 +295,60 @@ export default function CheckoutPage() {
             </div>
           </div>
 
-          <button
-            type="submit"
-            disabled={submitting}
-            className="h-12 bg-primary-500 text-white text-sm font-semibold rounded-md hover:bg-primary-600 disabled:opacity-50 flex items-center justify-center"
-          >
-            {submitting ? "Placing Order..." : `Place Order — ₦${total.toLocaleString()}`}
-          </button>
+          <div className="bg-white border border-neutral-200 rounded-md p-4">
+            <h2 className="font-semibold text-neutral-900 mb-3">Payment Method</h2>
+            <div className="flex flex-col gap-2">
+              <label className="flex items-center gap-3 p-3 border rounded-md cursor-pointer hover:bg-neutral-50 transition-colors border-neutral-300">
+                <input
+                  type="radio"
+                  name="paymentMethod"
+                  value="paystack"
+                  checked={paymentMethod === "paystack"}
+                  onChange={() => setPaymentMethod("paystack")}
+                  className="accent-[#1A5632]"
+                />
+                <div>
+                  <p className="text-sm font-medium text-neutral-900">Pay Online</p>
+                  <p className="text-xs text-neutral-500">Card, Bank Transfer, USSD</p>
+                </div>
+              </label>
+              <label className="flex items-center gap-3 p-3 border rounded-md cursor-pointer hover:bg-neutral-50 transition-colors border-neutral-300">
+                <input
+                  type="radio"
+                  name="paymentMethod"
+                  value="pay_on_delivery"
+                  checked={paymentMethod === "pay_on_delivery"}
+                  onChange={() => setPaymentMethod("pay_on_delivery")}
+                  className="accent-[#1A5632]"
+                />
+                <div>
+                  <p className="text-sm font-medium text-neutral-900">Pay on Delivery</p>
+                  <p className="text-xs text-neutral-500">Cash or transfer at delivery</p>
+                </div>
+              </label>
+            </div>
+          </div>
+
+          {paymentMethod === "paystack" ? (
+            <PaystackButton
+              email={form.email}
+              amount={total}
+              beforeOpen={createOrder}
+              onSuccess={handlePaystackSuccess}
+              onError={(err) => alert(err)}
+              disabled={!form.name || !form.phone || !form.email || !form.addressLine1 || !form.city}
+            >
+              Pay ₦{total.toLocaleString()}
+            </PaystackButton>
+          ) : (
+            <button
+              type="submit"
+              disabled={submitting}
+              className="h-12 bg-primary-500 text-white text-sm font-semibold rounded-md hover:bg-primary-600 disabled:opacity-50 flex items-center justify-center"
+            >
+              {submitting ? "Placing Order..." : `Place Order — ₦${total.toLocaleString()}`}
+            </button>
+          )}
         </form>
 
         {/* Order Summary */}
@@ -311,10 +381,6 @@ export default function CheckoutPage() {
                 <span>Total</span>
                 <span>₦{total.toLocaleString()}</span>
               </div>
-            </div>
-
-            <div className="mt-4 text-xs text-neutral-500">
-              <p>Payment method: Pay on Delivery</p>
             </div>
           </div>
         </div>
