@@ -143,3 +143,12 @@ CREATE TABLE IF NOT EXISTS "BusinessSetting" (
   "updatedBy" INTEGER,
   "updatedAt" TIMESTAMP NOT NULL DEFAULT now()
 );
+
+CREATE TABLE IF NOT EXISTS "PasswordResetToken" (
+  id SERIAL PRIMARY KEY,
+  email TEXT NOT NULL,
+  token TEXT NOT NULL UNIQUE,
+  "expiresAt" TIMESTAMP NOT NULL,
+  used BOOLEAN NOT NULL DEFAULT false,
+  "createdAt" TIMESTAMP NOT NULL DEFAULT now()
+);

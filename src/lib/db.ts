@@ -12,8 +12,9 @@ type TableName =
   | "stockAdjustments"
   | "domesticDeliveryFees"
   | "internationalDeliveryFees"
-  | "businessSettings"
-  | "orderStatusHistory";
+    | "businessSettings"
+    | "orderStatusHistory"
+    | "passwordResetTokens";
 
 function getModel(table: TableName) {
   const map: Record<TableName, any> = {
@@ -30,6 +31,7 @@ function getModel(table: TableName) {
     internationalDeliveryFees: prisma.internationalDeliveryFee,
     businessSettings: prisma.businessSetting,
     orderStatusHistory: prisma.orderStatusHistory,
+    passwordResetTokens: prisma.passwordResetToken,
   };
   return map[table];
 }

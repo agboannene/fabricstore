@@ -2,39 +2,80 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useCustomerAuth } from "@/lib/customer-auth-context";
+import { useSearchParams } from "next/navigation";
+import { Suspense } from "react";
 
-export default function CustomerLoginPage() {
-  const router = useRouter();
-  const { setCustomer } = useCustomerAuth();
-  const [email, setEmail] = useState("");
+function ResetPasswordContent() {
+  const searchParams = useSearchParams();
+  const token = searchParams.get("token");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [confirm, setConfirm] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState(false);
+
+  if (!token) {
+    return (
+      <div className="max-w-sm mx-auto px-6 py-16 text-center">
+        <h1 className="text-h2 font-heading font-bold text-red-600 mb-4">Invalid Link</h1>
+        <p className="text-neutral-500 mb-6">This password reset link is invalid or missing.</p>
+        <Link
+          href="/forgot-password"
+          className="inline-flex h-10 px-6 bg-primary-500 text-white text-sm font-semibold rounded-md hover:bg-primary-600 items-center no-underline"
+        >
+          Request a New Link
+        </Link>
+      </div>
+    );
+  }
+
+  if (success) {
+    return (
+      <div className="max-w-sm mx-auto px-6 py-16 text-center">
+        <h1 className="text-h2 font-heading font-bold text-neutral-900 mb-4">Password Updated</h1>
+        <p className="text-neutral-500 mb-6">Your password has been changed successfully.</p>
+        <Link
+          href="/login"
+          className="inline-flex h-10 px-6 bg-primary-500 text-white text-sm font-semibold rounded-md hover:bg-primary-600 items-center no-underline"
+        >
+          Sign In
+        </Link>
+      </div>
+    );
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError("");
+
+    if (password !== confirm) {
+      setError("Passwords do not match");
+      return;
+    }
+
+    if (password.length < 6) {
+      setError("Password must be at least 6 characters");
+      return;
+    }
+
     setLoading(true);
 
     try {
-      const res = await fetch("/api/auth/customer/login", {
+      const res = await fetch("/api/auth/reset-password", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ token, password }),
       });
 
       const data = await res.json();
 
       if (!data.success) {
-        setError(data.error || "Login failed");
+        setError(data.error || "Something went wrong");
         return;
       }
 
-      setCustomer(data.data);
-      router.push("/account");
+      setSuccess(true);
     } catch {
       setError("Network error. Please try again.");
     } finally {
@@ -44,28 +85,17 @@ export default function CustomerLoginPage() {
 
   return (
     <div className="max-w-sm mx-auto px-6 py-16">
-      <h1 className="text-h2 font-heading font-bold text-neutral-900 mb-6 text-center">
-        Sign In
+      <h1 className="text-h2 font-heading font-bold text-neutral-900 mb-2 text-center">
+        Reset Password
       </h1>
+      <p className="text-sm text-neutral-500 text-center mb-6">
+        Enter your new password below.
+      </p>
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <div>
-          <label htmlFor="email" className="block text-sm font-medium text-neutral-700 mb-1">
-            Email
-          </label>
-          <input
-            id="email"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="w-full h-11 px-3 border border-neutral-300 rounded-md text-sm"
-            required
-          />
-        </div>
-
-        <div>
           <label htmlFor="password" className="block text-sm font-medium text-neutral-700 mb-1">
-            Password
+            New Password
           </label>
           <div className="relative">
             <input
@@ -75,6 +105,7 @@ export default function CustomerLoginPage() {
               onChange={(e) => setPassword(e.target.value)}
               className="w-full h-11 px-3 pr-10 border border-neutral-300 rounded-md text-sm"
               required
+              minLength={6}
             />
             <button
               type="button"
@@ -96,10 +127,19 @@ export default function CustomerLoginPage() {
           </div>
         </div>
 
-        <div className="text-right">
-          <Link href="/forgot-password" className="text-xs text-primary-500 hover:underline">
-            Forgot password?
-          </Link>
+        <div>
+          <label htmlFor="confirm" className="block text-sm font-medium text-neutral-700 mb-1">
+            Confirm Password
+          </label>
+          <input
+            id="confirm"
+            type={showPassword ? "text" : "password"}
+            value={confirm}
+            onChange={(e) => setConfirm(e.target.value)}
+            className="w-full h-11 px-3 border border-neutral-300 rounded-md text-sm"
+            required
+            minLength={6}
+          />
         </div>
 
         {error && (
@@ -113,16 +153,23 @@ export default function CustomerLoginPage() {
           disabled={loading}
           className="w-full h-11 bg-primary-500 text-white text-sm font-semibold rounded-md hover:bg-primary-600 disabled:opacity-50"
         >
-          {loading ? "Signing in..." : "Sign In"}
+          {loading ? "Updating..." : "Reset Password"}
         </button>
-
-        <p className="text-sm text-neutral-500 text-center">
-          Don't have an account?{" "}
-          <Link href="/register" className="text-primary-500 hover:underline">
-            Create one
-          </Link>
-        </p>
       </form>
     </div>
+  );
+}
+
+export default function ResetPasswordPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="max-w-sm mx-auto px-6 py-16 text-center">
+          <p className="text-neutral-500">Loading...</p>
+        </div>
+      }
+    >
+      <ResetPasswordContent />
+    </Suspense>
   );
 }
